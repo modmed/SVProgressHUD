@@ -106,6 +106,12 @@ typedef void (^SVProgressHUDDismissCompletion)(void);
 + (void)setMaxSupportedWindowLevel:(UIWindowLevel)windowLevel;      // default is UIWindowLevelNormal
 + (void)setHapticsEnabled:(BOOL)hapticsEnabled;						// default is NO
 
+// ModMed Logo Animations
++ (void)enableModMedAnimation;
++ (void)setModMedAnimationDuration:(CFTimeInterval)interval;        // default is 1 second
++ (void)setModMedAnimationColor:(UIColor *)color;                   // default is the Mod Med purple
++ (void)setModMedAnimationDiameter:(CGFloat)diameter;               // default is 60.0 points
+
 #pragma mark - Show Methods
 
 + (void)show;
