@@ -42,6 +42,7 @@ static CGFloat const heartbeatStrokeWidth = 5.0;
     if(!CGRectEqualToRect(frame, super.frame)) {
         [super setFrame:frame];
         if(self.superview) {
+            self.offsetToCenter = self.diameter < self.superview.bounds.size.width ? (self.superview.bounds.size.width - self.diameter) / 2 : 0;
             [self layoutAnimatedLayer];
         }
     }
