@@ -13,6 +13,7 @@
 #import "SVIndefiniteAnimatedView.h"
 #import "SVProgressAnimatedView.h"
 #import "SVRadialGradientLayer.h"
+#import "MMLogoAnimatedView.h"
 
 #ifndef kCFCoreFoundationVersionNumber_iOS_9_0
 #define kCFCoreFoundationVersionNumber_iOS_9_0 1240.1
@@ -54,6 +55,7 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
 @property (nonatomic, strong) UIView *indefiniteAnimatedView;
 @property (nonatomic, strong) SVProgressAnimatedView *ringView;
 @property (nonatomic, strong) SVProgressAnimatedView *backgroundRingView;
+@property (nonatomic, strong) MMLogoAnimatedView *logoView;
 
 @property (nonatomic, readwrite) CGFloat progress;
 @property (nonatomic, readwrite) NSUInteger activityCount;
@@ -96,6 +98,13 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
 
 - (UIColor*)foregroundColorForStyle;
 - (UIColor*)backgroundColorForStyle;
+
+// properties for ModMed Animations
+@property (assign, nonatomic) BOOL isModMedAnimationEnabled;  
+@property (assign, nonatomic) CFTimeInterval modMedAnimationDuration;
+@property (assign, nonatomic) CGFloat modMedAnimationDiameter;
+@property (strong, nonatomic) UIColor *modMedAnimationColor;
+
 
 @end
 
@@ -228,6 +237,23 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
 + (void)setHapticsEnabled:(BOOL)hapticsEnabled {
     [self sharedView].hapticsEnabled = hapticsEnabled;
 }
+
++ (void)enableModMedAnimation {
+    [self sharedView].isModMedAnimationEnabled = YES;
+}
+
++ (void)setModMedAnimationColor:(UIColor *)color {
+    [self sharedView].modMedAnimationColor = color;
+}
+
++ (void)setModMedAnimationDuration:(CFTimeInterval)interval {
+    [self sharedView].modMedAnimationDuration = interval;
+}
+
++ (void)setModMedAnimationDiameter:(CGFloat)diameter {
+    [self sharedView].modMedAnimationDiameter = diameter;
+}
+
 
 #pragma mark - Show Methods
 
@@ -526,6 +552,12 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
         self.backgroundRingView.center = self.ringView.center = CGPointMake(CGRectGetMidX(self.hudView.bounds), centerY);
     }
     self.imageView.center = CGPointMake(CGRectGetMidX(self.hudView.bounds), centerY);
+    
+    if (self.logoView) {
+        BOOL isCentering = self.logoView.diameter < self.hudView.bounds.size.width;
+        self.logoView.offsetToCenter = isCentering ? (self.hudView.bounds.size.width - self.logoView.diameter) / 2 : 0;
+        [self.logoView layoutAnimatedLayer];
+    }
 
     // Label
     if(imageUsed || progressUsed) {
@@ -835,13 +867,28 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
                 [strongSelf cancelRingLayerAnimation];
                 
                 // Add indefiniteAnimatedView to HUD
+                
+                if (self.isModMedAnimationEnabled) {
+                    [strongSelf cancelModMedAnimation];
+                    // Add mod med logo view to HUD
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 80000
-                [strongSelf.hudVibrancyView.contentView addSubview:strongSelf.indefiniteAnimatedView];
+                    [strongSelf.hudVibrancyView.contentView addSubview:[strongSelf MMLogoAnimatedView]];
 #else
-                [strongSelf.hudView  addSubview:strongSelf.indefiniteAnimatedView];
+                    [strongSelf.hudView addSubview:[strongSelf MMLogoAnimatedView]];
 #endif
-                if([strongSelf.indefiniteAnimatedView respondsToSelector:@selector(startAnimating)]) {
-                    [(id)strongSelf.indefiniteAnimatedView startAnimating];
+                    if([strongSelf.logoView respondsToSelector:@selector(startAnimating)]) {
+                        [(id)strongSelf.logoView startAnimating];
+                    }
+                } else {
+                    // Add indefiniteAnimatedView to HUD
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 80000
+                    [strongSelf.hudVibrancyView.contentView addSubview:strongSelf.indefiniteAnimatedView];
+#else
+                    [strongSelf.hudView  addSubview:strongSelf.indefiniteAnimatedView];
+#endif
+                    if([strongSelf.indefiniteAnimatedView respondsToSelector:@selector(startAnimating)]) {
+                        [(id)strongSelf.indefiniteAnimatedView startAnimating];
+                    }
                 }
                 
                 // Update the activity count
@@ -1191,6 +1238,16 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
     
     return _backgroundRingView;
 }
+     
+- (MMLogoAnimatedView *)MMLogoAnimatedView {
+    self.logoView = [[MMLogoAnimatedView alloc] initWithFrame:CGRectZero];
+    self.logoView.duration = self.modMedAnimationDuration ?: 1.0;
+    self.logoView.strokeColor = self.modMedAnimationColor ?: [UIColor colorWithRed:78/255.0 green:42/255.0 blue:129/255.0 alpha:1];
+    self.logoView.diameter =  self.modMedAnimationDiameter ?: 60.0;
+         
+    return self.logoView;
+}
+
 
 - (void)cancelRingLayerAnimation {
     // Animate value update, stop animation
@@ -1205,6 +1262,21 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
     // Remove from view
     [self.ringView removeFromSuperview];
     [self.backgroundRingView removeFromSuperview];
+}
+     
+- (void)cancelModMedAnimation {
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+    
+    [self.hudView.layer removeAllAnimations];
+    
+    [CATransaction commit];
+    
+    if (self.logoView) {
+        [self.logoView removeFromSuperview];
+        self.logoView = nil;
+    }
+    [self.backgroundView removeFromSuperview];
 }
 
 - (void)cancelIndefiniteAnimatedViewAnimation {
