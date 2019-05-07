@@ -1,3 +1,25 @@
+## Version 2.2.5
+* Use GitHub official license style
+
+## Version 2.2.4
+* Can't see checkmark when using SVProgressHUDStyleDark #873
+* Updated README’s instructions for Carthage deployment #876
+* Added a stale configuration
+
+## Version 2.2.3
+* Off-screen keyboard returns a positive value in iOS 11.2 as its height #835, #846, #852
+* Fix bug where status label hiddenness is not updated when setStatus is called #854
+* Use @available to suppress warnings in Xcode 9 #821 #864 #870
+
+## Version 2.2.2
+* Rollback of popActivity #824
+
+## Version 2.2
+* Update project to AutoLayout (finally)
+* Added grace time #556
+* New Fade in / Fade out animation #703, #757, #776, #779, #791, #793, #798, #800
+* Remove vibrancy for better readability on iOS 11 (and below)
+
 ## Version 2.1.3
 * Fixed: Background resize #709
 * Update year to 2017
