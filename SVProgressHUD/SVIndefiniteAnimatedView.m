@@ -2,7 +2,7 @@
 //  SVIndefiniteAnimatedView.m
 //  SVProgressHUD, https://github.com/SVProgressHUD/SVProgressHUD
 //
-//  Copyright (c) 2014-2018 Guillaume Campagna. All rights reserved.
+//  Copyright (c) 2014-2019 Guillaume Campagna. All rights reserved.
 //
 
 #import "SVIndefiniteAnimatedView.h"
@@ -25,9 +25,18 @@
     }
 }
 
+- (void)layoutSubviews {
+    [super layoutSubviews];
+
+    [self layoutAnimatedLayer];
+}
+
 - (void)layoutAnimatedLayer {
     CALayer *layer = self.indefiniteAnimatedLayer;
-    [self.layer addSublayer:layer];
+
+    if (!layer.superlayer) {
+        [self.layer addSublayer:layer];
+    }
     
     CGFloat widthDiff = CGRectGetWidth(self.bounds) - CGRectGetWidth(layer.bounds);
     CGFloat heightDiff = CGRectGetHeight(self.bounds) - CGRectGetHeight(layer.bounds);
