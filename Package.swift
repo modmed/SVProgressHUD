@@ -26,7 +26,8 @@ let package = Package(
             exclude: ["SVProgressHUD-Prefix.pch"],
             resources: [
                 .copy("SVProgressHUD.bundle")
-            ]
+            ],
+            publicHeadersPath: "SVProgressHUD"
         )
     ],
     swiftLanguageVersions: [.v5]
