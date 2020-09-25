@@ -27,7 +27,7 @@ let package = Package(
             resources: [
                 .copy("SVProgressHUD.bundle")
             ],
-            publicHeadersPath: "SVProgressHUD"
+            publicHeadersPath: ""
         )
     ],
     swiftLanguageVersions: [.v5]
