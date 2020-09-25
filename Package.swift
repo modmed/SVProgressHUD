@@ -22,7 +22,12 @@ let package = Package(
         .target(
             name: "SVProgressHUD",
             dependencies: [],
-            path: "SVProgressHUD")
+            path: "SVProgressHUD",
+            exclude: ["SVProgressHUD-Prefix.pch"],
+            resources: [
+                .copy("SVProgressHUD.bundle")
+            ]
+        )
     ],
     swiftLanguageVersions: [.v5]
 )
