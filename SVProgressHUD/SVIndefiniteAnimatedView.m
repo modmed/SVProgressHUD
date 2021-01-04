@@ -59,8 +59,12 @@
         _indefiniteAnimatedLayer.path = smoothedPath.CGPath;
         
         CALayer *maskLayer = [CALayer layer];
-        
-        NSBundle *bundle = [NSBundle bundleForClass:[SVProgressHUD class]];
+
+#if SWIFT_PACKAGE
+    NSBundle *bundle = SWIFTPM_MODULE_BUNDLE;
+#else
+    NSBundle *bundle = [NSBundle bundleForClass:self.class];
+#endif
         NSURL *url = [bundle URLForResource:@"SVProgressHUD" withExtension:@"bundle"];
         NSBundle *imageBundle = [NSBundle bundleWithURL:url];
         
