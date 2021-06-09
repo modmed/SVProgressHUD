@@ -8,6 +8,10 @@
 #import <UIKit/UIKit.h>
 #import <AvailabilityMacros.h>
 
+#import "SVIndefiniteAnimatedView.h"
+#import "SVProgressAnimatedView.h"
+#import "SVRadialGradientLayer.h"
+
 extern NSString * _Nonnull const SVProgressHUDDidReceiveTouchEventNotification;
 extern NSString * _Nonnull const SVProgressHUDDidTouchDownInsideNotification;
 extern NSString * _Nonnull const SVProgressHUDWillDisappearNotification;
